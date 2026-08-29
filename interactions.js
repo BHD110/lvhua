@@ -9,6 +9,21 @@
     hero: "根据上传的人物肖像自动生成一张收藏版史诗叙事打卡纪念海报：巨大的人物剪影作为外轮廓，剪影内部自动生长出完整世界观、标志性场景、象征符号、关键建筑、风物、道具与氛围（贵州旅行打卡主题）。整体不是普通拼贴，而是高级剪影轮廓填充式叙事合成，带有双重曝光式联想，电影海报与梦幻水彩插画融合风格；柔和空气透视，轻雾化过渡，纸张颗粒，边缘飞白与刷痕，大面积留白，版式克制高级，安静、宏大、神圣、怀旧、诗意、旅途传说感。风格、色彩、场景、材质全部根据贵州旅行主题自动适配，剪影内的风景元素由上传的参考图决定。所有元素必须强绑定贵州地域气质，一眼识别，画面整洁有序，呈现高级叙事感与贵州旅行纪念感。人物穿日常旅行穿搭，整体自然、青春、有纪念感，生成人物样貌与第1张人物参考图高度相似。上传的前【人物图数量】张为人物参考图，人物保持一致性，五官、发型、肤色、服装与参考图贴合，主要生成自然侧颜。其余图片为贵州地点参考图，地点景观按上传顺序从上到下、由远及近自然排布并融合在人物剪影轮廓内部。每个地点元素在剪影内部各自占据一块区域，人物剪影与内部风景是绝对主体。整体仍然保持大面积留白和克制的版式。横构图 16:9，无 logo、无水印、无可读文字。",
     footprint: "一张竖版高级城市文旅海报，主题为【城市名】城市图鉴，旅行摄影与城市导览视觉风格，3:4 构图。第1张图片为人物实拍照，画面中心人物直接使用该人物，保持人物五官、发型、眼镜、服装、肤色和个人特征。人物自然融入城市街道或旅行地点中，呈现生活化旅行抓拍感，光影自然，材质细节清晰。第2张至最后一张图片为景区实拍原图，每张图片对应一个用户填写的地点名称。画面中为每个地点设置一张景区展示卡片，卡片照片直接使用对应参考图，完整呈现该地点的标志性景观。地点卡片按用户填写的地点顺序排列，每张卡片配对应地点名称，信息清晰可读。背景为【城市名】城市街景，自然 daylight、普通旅行摄影质感，天空淡蓝，光线明亮通透，画面干净现代。画面叠加精致的手机导航 APP 界面元素：人物脚下的定位箭头与路线指引虚线、半透明白色天气卡片、行程卡片、地标距离标注、小型线性图标，排版精致，像旅行攻略导航界面。顶部大标题写“【城市名】”，英文副标题写“【城市拼音】”。地点卡片名称使用用户填写的地点名，文字清晰可读、准确。整体色调固定为白、蓝、暖橙点缀，细节丰富，超高清。realistic city photography, authentic travel photo, travel app UI overlay, navigation interface, premium travel poster, natural daylight, no AI look, no digital painting, photojournalistic style",
   });
+  const ASSET_BASE_URL = "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/";
+  const assetUrl = (file) => `${ASSET_BASE_URL}${file.split("/").map(encodeURIComponent).join("/")}`;
+  const EXAMPLES = Object.freeze({
+    reframe: { input: assetUrl("素材/废片mock/废片.webp"), result: assetUrl("素材/废片mock/result.webp") },
+    hero: {
+      person: assetUrl("素材/主角mock/人物.webp"),
+      places: ["风景1.webp", "风景2.webp", "风景3.webp"].map((file) => assetUrl(`素材/主角mock/${file}`)),
+      result: assetUrl("素材/主角mock/result.webp"),
+    },
+    footprint: {
+      person: assetUrl("素材/足迹图mock/人物-主形象.webp"),
+      places: [["黄果树大瀑布", "景区-黄果树大瀑布.webp"], ["黔灵山公园", "景区-黔灵山公园.webp"], ["青云市集", "景区-青云市集.webp"], ["西江千户苗寨", "景区-西江千户苗寨.webp"]],
+      result: assetUrl("素材/足迹图mock/result-海报-男生版6.webp"),
+    },
+  });
   const entranceObserver = reducedMotion ? null : new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -69,7 +84,7 @@
     });
   }
 
-  function addExampleButton(anchor, imagePath, input) {
+  function addExampleButton(anchor, imagePath, input, onLoaded) {
     if (!anchor || anchor.parentElement?.querySelector(`.example-upload[data-example="${imagePath}"]`)) return;
     const button = document.createElement("button");
     button.type = "button";
@@ -86,6 +101,7 @@
         transfer.items.add(new File([blob], imagePath.split("/").pop(), { type: blob.type || "image/jpeg" }));
         input.files = transfer.files;
         input.dispatchEvent(new Event("change", { bubbles: true }));
+        onLoaded?.(input.files);
       } catch (error) {
         const status = document.querySelector("#status, #result");
         if (status) status.textContent = error instanceof Error ? error.message : "示例图片正在准备中。";
@@ -94,6 +110,34 @@
       }
     });
     anchor.insertAdjacentElement("afterend", button);
+  }
+
+  async function fileFromUrl(imagePath) {
+    const response = await fetch(imagePath);
+    if (!response.ok) throw new Error("示例图片暂时无法读取。");
+    const blob = await response.blob();
+    return new File([blob], imagePath.split("/").pop(), { type: blob.type || "image/jpeg" });
+  }
+
+  function renderAlbum(container, filesOrUrls, label) {
+    if (!container) return;
+    container.replaceChildren(...Array.from(filesOrUrls || []).map((item, index) => {
+      const image = document.createElement("img");
+      image.src = typeof item === "string" ? item : URL.createObjectURL(item);
+      image.alt = `${label}${index + 1}`;
+      return image;
+    }));
+  }
+
+  function renderLocationPreview(row, source) {
+    let image = row.querySelector(".location-preview");
+    if (!image) {
+      image = document.createElement("img");
+      image.className = "location-preview";
+      image.alt = "地点预览";
+      row.append(image);
+    }
+    image.src = typeof source === "string" ? source : URL.createObjectURL(source);
   }
 
   function loadImageGenerator() {
@@ -175,10 +219,17 @@
     const input = document.querySelector("#file");
     if (!input) return;
     const pick = document.querySelector("label.pick");
-    addExampleButton(pick?.parentElement || pick, "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E5%BA%9F%E7%89%87mock/%E5%BA%9F%E7%89%87.webp", input);
+    addExampleButton(pick?.parentElement || pick, EXAMPLES.reframe.input, input);
     const button = document.querySelector("#generate");
     const status = document.querySelector("#result");
     const preview = document.querySelector("#preview");
+    preview.src = EXAMPLES.reframe.result;
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+      preview.src = URL.createObjectURL(file);
+      preview.alt = "已上传的游客照预览";
+    });
     if (button && status && preview) attachGenerator(button, status, preview, () => Array.from(input.files), () => PROMPTS.reframe, "9:16", "生成的旅画");
   }
 
@@ -186,11 +237,36 @@
     const peopleInput = document.querySelector("#peopleInput");
     const placeInput = document.querySelector("#placeInput");
     if (!peopleInput || !placeInput) return;
-    addExampleButton(document.querySelector('[data-input="peopleInput"]'), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92mock/%E4%BA%BA%E7%89%A9.webp", peopleInput);
-    addExampleButton(document.querySelector('[data-input="placeInput"]'), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92mock/%E9%A3%8E%E6%99%AF1.webp", placeInput);
+    const peopleAlbum = document.querySelector("#peopleAlbum");
+    const placeAlbum = document.querySelector("#placeAlbum");
+    const useExamples = document.createElement("button");
+    useExamples.type = "button";
+    useExamples.className = "example-upload";
+    useExamples.textContent = "使用示例图片";
+    placeInput.closest(".source")?.append(useExamples);
+    useExamples.addEventListener("click", async () => {
+      useExamples.disabled = true;
+      try {
+        const [person, ...places] = await Promise.all([EXAMPLES.hero.person, ...EXAMPLES.hero.places].map(fileFromUrl));
+        const personTransfer = new DataTransfer();
+        personTransfer.items.add(person);
+        peopleInput.files = personTransfer.files;
+        const placeTransfer = new DataTransfer();
+        places.forEach((file) => placeTransfer.items.add(file));
+        placeInput.files = placeTransfer.files;
+        peopleInput.dispatchEvent(new Event("change", { bubbles: true }));
+        placeInput.dispatchEvent(new Event("change", { bubbles: true }));
+      } catch (error) {
+        const status = document.querySelector("#status");
+        if (status) status.textContent = error instanceof Error ? error.message : "示例图片正在准备中。";
+      } finally { useExamples.disabled = false; }
+    });
+    peopleInput.addEventListener("change", () => renderAlbum(peopleAlbum, peopleInput.files, "人物照片"));
+    placeInput.addEventListener("change", () => renderAlbum(placeAlbum, placeInput.files, "风景照片"));
     const button = document.querySelector("#generate");
     const status = document.querySelector("#status");
     const preview = document.querySelector(".preview img");
+    if (preview) preview.src = EXAMPLES.hero.result;
     if (button && status && preview) attachGenerator(button, status, preview, () => [...peopleInput.files, ...placeInput.files], () => PROMPTS.hero.replace("【人物图数量】", String(peopleInput.files.length)), "16:9", "生成的主角画面");
   }
 
@@ -199,13 +275,12 @@
     const locations = document.querySelector("#locations");
     const preview = document.querySelector(".preview img");
     if (!personInput || !locations || !preview) return;
-    addExampleButton(personInput.closest("label"), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E4%BA%BA%E7%89%A9-%E4%B8%BB%E5%BD%A2%E8%B1%A1.webp", personInput);
-    const placeExamples = [
-      ["黄果树大瀑布", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%BB%84%E6%9E%9C%E6%A0%91%E5%A4%A7%E7%80%91%E5%B8%83.webp"],
-      ["黔灵山公园", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%BB%94%E7%81%B5%E5%B1%B1%E5%85%AC%E5%9B%AD.webp"],
-      ["青云市集", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%9D%92%E4%BA%91%E5%B8%82%E9%9B%86.webp"],
-      ["西江千户苗寨", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E8%A5%BF%E6%B1%9F%E5%8D%83%E6%88%B7%E8%8B%97%E5%AF%A8.webp"],
-    ];
+    const personPreview = document.createElement("div");
+    personPreview.className = "person-preview-stack";
+    personInput.closest(".task")?.append(personPreview);
+    personInput.addEventListener("change", () => renderAlbum(personPreview, personInput.files, "人物照片"));
+    addExampleButton(personInput.closest("label"), EXAMPLES.footprint.person, personInput);
+    const placeExamples = EXAMPLES.footprint.places;
     const addButton = document.querySelector("#add-location");
     const exampleButton = document.createElement("button");
     exampleButton.type = "button";
@@ -215,18 +290,22 @@
     exampleButton.addEventListener("click", async () => {
       exampleButton.disabled = true;
       try {
+        const person = await fileFromUrl(EXAMPLES.footprint.person);
+        const personTransfer = new DataTransfer();
+        personTransfer.items.add(person);
+        personInput.files = personTransfer.files;
+        personInput.dispatchEvent(new Event("change", { bubbles: true }));
         locations.replaceChildren();
         const rows = placeExamples.map(([name]) => window.addFootprintLocation(name));
         await Promise.all(rows.map(async (row, index) => {
           const [, imagePath] = placeExamples[index];
-          const response = await fetch(imagePath);
-          if (!response.ok) throw new Error("示例足迹图片暂时无法读取。");
-          const blob = await response.blob();
+          const file = await fileFromUrl(imagePath);
           const transfer = new DataTransfer();
-          transfer.items.add(new File([blob], imagePath.split("/").pop(), { type: blob.type || "image/jpeg" }));
+          transfer.items.add(file);
           const input = row.querySelector('input[type="file"]');
           input.files = transfer.files;
           input.dispatchEvent(new Event("change", { bubbles: true }));
+          renderLocationPreview(row, file);
         }));
       } catch (error) {
         status.textContent = error instanceof Error ? error.message : "示例足迹正在准备中。";
@@ -234,6 +313,11 @@
         exampleButton.disabled = false;
       }
     });
+    locations.addEventListener("change", (event) => {
+      const input = event.target;
+      if (input instanceof HTMLInputElement && input.type === "file" && input.files[0]) renderLocationPreview(input.closest(".location"), input.files[0]);
+    });
+    if (preview) preview.src = EXAMPLES.footprint.result;
     const side = document.querySelector(".side");
     const button = document.createElement("button");
     button.type = "button";

@@ -65,6 +65,8 @@ Pi Agent Harness
 
 ## 目标平台架构
 
+完整分层架构图见：[旅画目标平台架构](docs/architecture/platform-architecture.md)。
+
 ```text
 Next.js Web 应用
   ├─ 旅行创作工作台

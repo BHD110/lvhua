@@ -47,12 +47,13 @@
     element.dataset.amicroMagnetic = "true";
     element.classList.add("magnetic");
     element.addEventListener("mousemove", (event) => {
+      if (element.classList.contains("button-surface")) return;
       const rect = element.getBoundingClientRect();
       const x = (event.clientX - rect.left - rect.width / 2) * .12;
       const y = (event.clientY - rect.top - rect.height / 2) * .12;
       element.style.transform = `translate(${x}px, ${y}px)`;
     });
-    element.addEventListener("mouseleave", () => { element.style.transform = "translate(0, 0)"; });
+    element.addEventListener("mouseleave", () => { if (!element.classList.contains("button-surface")) element.style.transform = "translate(0, 0)"; });
   }
 
   function makeTilt(element) {

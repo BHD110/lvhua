@@ -28,6 +28,7 @@ body .brand-logo { display: block; margin: 0 0 8px; padding: 10px 0 6px; line-he
 .location .example-upload { grid-column: 2; justify-self: end; margin: 0; font-size: 12px; }
 .location .plus { display: grid; place-items: center; line-height: 1; }
 .location-name { width: 100%; outline-color: #bd3c35; }
+#add-location + .example-upload { margin-left: 29px; }
 .generation-status { min-height: 22px; margin: 14px 0 0; color: #82594f; font-size: 14px; font-weight: 700; text-align: center; }
 .footprint-generate { margin-top: 22px; }
 
@@ -53,6 +54,7 @@ dialog[open] .dialog-foot { animation-delay: .08s; }
 @media (max-width: 700px) {
   .brand-logo img { width: 66px; }
   body .brand-logo { margin-bottom: 4px; padding: 8px 0 4px; }
+  #add-location + .example-upload { margin-left: 18px; }
 }
 
 .top:has(.brand-logo) { padding: 16px 0; }

@@ -170,7 +170,7 @@
     link.download = "旅画生成图";
   }
 
-  function attachGenerator(button, status, preview, getImages, getPrompt, aspectRatio, readyLabel) {
+  function attachGenerator(button, status, preview, getImages, getPrompt, aspectRatio, readyLabel, getExampleResult) {
     let generator;
     button.onclick = async () => {
       const images = getImages();
@@ -181,6 +181,19 @@
       button.disabled = true;
       button.textContent = "正在生成";
       status.innerHTML = window.amicroLoading("正在生成画面，通常约需 1 分钟");
+      const exampleResult = getExampleResult?.();
+      if (exampleResult) {
+        window.setTimeout(() => {
+          preview.src = exampleResult;
+          preview.alt = readyLabel;
+          addDownloadLink(preview, exampleResult);
+          button.disabled = false;
+          button.textContent = "再次生成";
+          status.textContent = "示例画面已生成";
+          preview.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 60000);
+        return;
+      }
       try {
         await loadImageGenerator();
         if (!generator) {
@@ -220,24 +233,26 @@
     const input = document.querySelector("#file");
     if (!input) return;
     const pick = document.querySelector("label.pick");
-    addExampleButton(pick?.parentElement || pick, EXAMPLES.reframe.input, input);
+    let usesExample = false;
+    addExampleButton(pick?.parentElement || pick, EXAMPLES.reframe.input, input, () => { usesExample = true; });
     const button = document.querySelector("#generate");
     const status = document.querySelector("#result");
     const preview = document.querySelector("#preview");
-    preview.src = EXAMPLES.reframe.result;
-    input.addEventListener("change", () => {
+    input.addEventListener("change", (event) => {
+      if (event.isTrusted) usesExample = false;
       const file = input.files[0];
       if (!file) return;
       preview.src = URL.createObjectURL(file);
       preview.alt = "已上传的游客照预览";
     });
-    if (button && status && preview) attachGenerator(button, status, preview, () => Array.from(input.files), () => PROMPTS.reframe, "9:16", "生成的旅画");
+    if (button && status && preview) attachGenerator(button, status, preview, () => Array.from(input.files), () => PROMPTS.reframe, "9:16", "生成的旅画", () => usesExample ? EXAMPLES.reframe.result : "");
   }
 
   function enhanceHeroPage() {
     const peopleInput = document.querySelector("#peopleInput");
     const placeInput = document.querySelector("#placeInput");
     if (!peopleInput || !placeInput) return;
+    let usesExample = false;
     const peopleAlbum = document.querySelector("#peopleAlbum");
     const placeAlbum = document.querySelector("#placeAlbum");
     const useExamples = document.createElement("button");
@@ -257,18 +272,18 @@
         placeInput.files = placeTransfer.files;
         peopleInput.dispatchEvent(new Event("change", { bubbles: true }));
         placeInput.dispatchEvent(new Event("change", { bubbles: true }));
+        usesExample = true;
       } catch (error) {
         const status = document.querySelector("#status");
         if (status) status.textContent = error instanceof Error ? error.message : "示例图片正在准备中。";
       } finally { useExamples.disabled = false; }
     });
-    peopleInput.addEventListener("change", () => renderAlbum(peopleAlbum, peopleInput.files, "人物照片"));
-    placeInput.addEventListener("change", () => renderAlbum(placeAlbum, placeInput.files, "风景照片"));
+    peopleInput.addEventListener("change", (event) => { if (event.isTrusted) usesExample = false; renderAlbum(peopleAlbum, peopleInput.files, "人物照片"); });
+    placeInput.addEventListener("change", (event) => { if (event.isTrusted) usesExample = false; renderAlbum(placeAlbum, placeInput.files, "风景照片"); });
     const button = document.querySelector("#generate");
     const status = document.querySelector("#status");
     const preview = document.querySelector(".preview img");
-    if (preview) preview.src = EXAMPLES.hero.result;
-    if (button && status && preview) attachGenerator(button, status, preview, () => [...peopleInput.files, ...placeInput.files], () => PROMPTS.hero.replace("【人物图数量】", String(peopleInput.files.length)), "16:9", "生成的主角画面");
+    if (button && status && preview) attachGenerator(button, status, preview, () => [...peopleInput.files, ...placeInput.files], () => PROMPTS.hero.replace("【人物图数量】", String(peopleInput.files.length)), "16:9", "生成的主角画面", () => usesExample ? EXAMPLES.hero.result : "");
   }
 
   function enhanceFootprintPage() {
@@ -276,11 +291,12 @@
     const locations = document.querySelector("#locations");
     const preview = document.querySelector(".preview img");
     if (!personInput || !locations || !preview) return;
+    let usesExample = false;
     const personPreview = document.createElement("div");
     personPreview.className = "person-preview-stack";
     personInput.closest(".task")?.append(personPreview);
-    personInput.addEventListener("change", () => renderAlbum(personPreview, personInput.files, "人物照片"));
-    addExampleButton(personInput.closest("label"), EXAMPLES.footprint.person, personInput);
+    personInput.addEventListener("change", (event) => { if (event.isTrusted) usesExample = false; renderAlbum(personPreview, personInput.files, "人物照片"); });
+    addExampleButton(personInput.closest("label"), EXAMPLES.footprint.person, personInput, () => { usesExample = true; });
     const placeExamples = EXAMPLES.footprint.places;
     const addButton = document.querySelector("#add-location");
     const exampleButton = document.createElement("button");
@@ -308,6 +324,7 @@
           input.dispatchEvent(new Event("change", { bubbles: true }));
           renderLocationPreview(row, file);
         }));
+        usesExample = true;
       } catch (error) {
         status.textContent = error instanceof Error ? error.message : "示例足迹正在准备中。";
       } finally {
@@ -316,9 +333,11 @@
     });
     locations.addEventListener("change", (event) => {
       const input = event.target;
-      if (input instanceof HTMLInputElement && input.type === "file" && input.files[0]) renderLocationPreview(input.closest(".location"), input.files[0]);
+      if (input instanceof HTMLInputElement && input.type === "file" && input.files[0]) {
+        if (event.isTrusted) usesExample = false;
+        renderLocationPreview(input.closest(".location"), input.files[0]);
+      }
     });
-    if (preview) preview.src = EXAMPLES.footprint.result;
     const side = document.querySelector(".side");
     const button = document.createElement("button");
     button.type = "button";
@@ -340,7 +359,7 @@
         .replaceAll("【城市拼音】", cityName.toUpperCase())
         .replace("每张卡片配对应地点名称，信息清晰可读。", `地点名称依次为：${names.join("、")}。每张卡片配对应地点名称，信息清晰可读。`);
     };
-    attachGenerator(button, status, preview, () => [ ...personInput.files, ...getLocationFiles() ], getFootprintPrompt, "3:4", "生成的足迹海报");
+    attachGenerator(button, status, preview, () => [ ...personInput.files, ...getLocationFiles() ], getFootprintPrompt, "3:4", "生成的足迹海报", () => usesExample ? EXAMPLES.footprint.result : "");
   }
 
   enhanceReframePage();

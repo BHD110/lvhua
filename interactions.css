@@ -1,0 +1,37 @@
+@keyframes amicro-fade-up {
+  from { opacity: 0; transform: translateY(36px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes amicro-zoom-in {
+  from { opacity: 0; transform: scale(.85); filter: blur(12px); }
+  to { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+@keyframes amicro-pulse-dot {
+  0%, 100% { opacity: .2; transform: scale(.72); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.motion-enter { opacity: 0; }
+.motion-enter.is-visible { animation: amicro-fade-up .8s cubic-bezier(.16,1,.3,1) both; }
+.upload-complete { animation: amicro-fade-up .45s cubic-bezier(.16,1,.3,1) both; }
+
+.tilt-surface { transform-style: preserve-3d; will-change: transform; transition: transform .38s cubic-bezier(.16,1,.3,1), box-shadow .38s ease; }
+.tilt-surface:hover { box-shadow: 25px 30px 0 var(--peach, #edc8b8); }
+.magnetic { will-change: transform; transition: transform .3s cubic-bezier(.16,1,.3,1), background .2s ease, color .2s ease; }
+
+.pulse-dots { display: inline-flex; gap: 5px; align-items: center; margin-left: 9px; vertical-align: middle; }
+.pulse-dots i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: amicro-pulse-dot 1.4s ease-in-out infinite; }
+.pulse-dots i:nth-child(2) { animation-delay: .2s; }
+.pulse-dots i:nth-child(3) { animation-delay: .4s; }
+
+.lightbox.open img, dialog[open] .dialog-head, dialog[open] .locations, dialog[open] .dialog-foot { animation: amicro-zoom-in .45s cubic-bezier(.16,1,.3,1) both; }
+dialog[open] .locations { animation-delay: .04s; }
+dialog[open] .dialog-foot { animation-delay: .08s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-enter, .motion-enter.is-visible, .upload-complete, .lightbox.open img, dialog[open] .dialog-head, dialog[open] .locations, dialog[open] .dialog-foot { animation: none; opacity: 1; filter: none; }
+  .tilt-surface, .magnetic { transition: none; transform: none !important; }
+  .pulse-dots i { animation: none; opacity: 1; transform: none; }
+}

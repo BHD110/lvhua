@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPT Image 2 生图组件</title>
+  <link rel="stylesheet" href="./gpt-image-2-generator.css">
+  <style>
+    :root { --paper: #fbf6ec; --ink: #3c201c; --red: #bd3c35; --rose: #edc8b8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+    main { width: min(1020px, calc(100% - 48px)); margin: 0 auto; padding: 48px 0 80px; }
+    header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 28px; border-bottom: 1px solid #d9baa0; }
+    .brand { margin: 0; color: var(--red); font-size: 30px; font-weight: 900; letter-spacing: 6px; }
+    .tag { color: #82594f; font-size: 14px; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .82fr); gap: clamp(34px, 7vw, 100px); align-items: center; padding-top: 56px; }
+    h1 { margin: 0; font-size: clamp(36px, 5vw, 64px); line-height: 1.12; letter-spacing: 2px; }
+    h1 span { display: block; color: var(--red); }
+    .intro { margin: 19px 0 0; color: #82594f; line-height: 1.8; }
+    .preview { margin: 32px 0 0; box-shadow: 17px 20px 0 var(--rose); }
+    .preview img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+    @media (max-width: 720px) { main { width: min(100% - 36px, 580px); padding-top: 28px; } .layout { grid-template-columns: 1fr; padding-top: 42px; } header { align-items: flex-start; gap: 10px; flex-direction: column; } .preview { box-shadow: 11px 13px 0 var(--rose); } }
+  </style>
+</head>
+<body>
+  <main>
+    <header><p class="brand">旅画</p><span class="tag">GPT Image 2</span></header>
+    <section class="layout">
+      <div>
+        <h1>把旅行照片<span>重新画出来</span></h1>
+        <p class="intro">上传参考图，填写画面描述并选择比例，生成图片会展示在这里。</p>
+        <figure class="preview"><img id="latest-image" src="素材/废片图.png" alt="图片预览"></figure>
+      </div>
+      <gpt-image-2-generator
+        id="image-generator"
+        aspect-ratio="4:3"
+        button-label="生成旅画"
+        prompt="将这张旅行照片整理成电影感旅拍画面，保留主体和地点特征，自然光线，细节清晰。">
+      </gpt-image-2-generator>
+    </section>
+  </main>
+  <script src="./gpt-image-2-generator.js"></script>
+  <script>
+    document.querySelector("#image-generator").addEventListener("generated", (event) => {
+      document.querySelector("#latest-image").src = event.detail.images[0];
+    });
+  </script>
+</body>
+</html>

@@ -2,3 +2,5 @@ node_modules/
 .next/
 .npm-stage/
 生图key.txt
+生图key2.txt
+.env

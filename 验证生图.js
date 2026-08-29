@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const apiBaseUrl = "https://grsai.dakka.com.cn";
+const apiBaseUrl = "https://grsaiapi.com";
 const apiKey = fs.readFileSync(path.join(__dirname, "生图key.txt"), "utf8").trim();
 const referenceImagePath = "D:/xwechat_files/wxid_kjdqynimpcc222_5d96/temp/RWTemp/2026-08/0f8783cb4f9f1fdfd532f43f99b21785.jpg";
 const statusPath = path.join(__dirname, "生图验证状态.json");

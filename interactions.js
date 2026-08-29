@@ -25,8 +25,8 @@
     element.classList.add("magnetic");
     element.addEventListener("mousemove", (event) => {
       const rect = element.getBoundingClientRect();
-      const x = (event.clientX - rect.left - rect.width / 2) * .28;
-      const y = (event.clientY - rect.top - rect.height / 2) * .28;
+      const x = (event.clientX - rect.left - rect.width / 2) * .12;
+      const y = (event.clientY - rect.top - rect.height / 2) * .12;
       element.style.transform = `translate(${x}px, ${y}px)`;
     });
     element.addEventListener("mouseleave", () => { element.style.transform = "translate(0, 0)"; });
@@ -52,27 +52,6 @@
   }
 
   window.amicroLoading = (message) => `${message}<span class="pulse-dots" aria-label="处理中"><i></i><i></i><i></i></span>`;
-  const generateButton = document.querySelector("#generate");
-  const heroStatus = document.querySelector("#status");
-  const reframeStatus = document.querySelector("#result");
-  if (generateButton && heroStatus) {
-    generateButton.onclick = () => {
-      heroStatus.innerHTML = window.amicroLoading("正在组合你的旅途画面");
-      window.setTimeout(() => { heroStatus.textContent = "画面已准备好，可以继续调整照片"; }, 750);
-    };
-  }
-  if (generateButton && reframeStatus) {
-    generateButton.onclick = () => {
-      generateButton.disabled = true;
-      generateButton.textContent = "正在生成";
-      reframeStatus.innerHTML = window.amicroLoading("旅画正在整理这段旅途的色彩与记忆");
-      window.setTimeout(() => {
-        generateButton.disabled = false;
-        generateButton.textContent = "再次生成";
-        reframeStatus.textContent = "画面已准备完成";
-      }, 1100);
-    };
-  }
   document.addEventListener("change", (event) => {
     const input = event.target;
     if (!(input instanceof HTMLInputElement) || input.type !== "file" || !input.files?.length) return;

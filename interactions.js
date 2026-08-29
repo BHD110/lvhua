@@ -1,5 +1,8 @@
 (() => {
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // 动画默认始终运行；仅在 URL 带 ?motion-off 时尊重系统的"减弱动态效果"设置
+  const respectSystemReducedMotion = new URLSearchParams(location.search).has("motion-off");
+  const reducedMotion = respectSystemReducedMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reducedMotion) document.documentElement.classList.add("motion-off");
   const interactiveSelector = "button, a.generate, label.pick, label.action, label.upload";
   const entranceObserver = reducedMotion ? null : new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
@@ -54,7 +57,7 @@
       homeLink.href = "index.html";
       homeLink.setAttribute("aria-label", "返回首页");
       const logo = document.createElement("img");
-      logo.src = "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/logo.png";
+      logo.src = "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/logo-lotus.png";
       logo.alt = "旅画";
       homeLink.append(logo);
       brand.replaceChildren(homeLink);
@@ -144,7 +147,7 @@
     const input = document.querySelector("#file");
     if (!input) return;
     const pick = document.querySelector("label.pick");
-    addExampleButton(pick?.parentElement || pick, "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/%E5%BA%9F%E7%89%87mock/%E5%BA%9F%E7%89%87.jpg", input);
+    addExampleButton(pick?.parentElement || pick, "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E5%BA%9F%E7%89%87mock/%E5%BA%9F%E7%89%87.webp", input);
     const button = document.querySelector("#generate");
     const status = document.querySelector("#result");
     const preview = document.querySelector("#preview");
@@ -155,8 +158,8 @@
     const peopleInput = document.querySelector("#peopleInput");
     const placeInput = document.querySelector("#placeInput");
     if (!peopleInput || !placeInput) return;
-    addExampleButton(document.querySelector('[data-input="peopleInput"]'), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92mock/%E4%BA%BA%E7%89%A9.jpg", peopleInput);
-    addExampleButton(document.querySelector('[data-input="placeInput"]'), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92mock/%E9%A3%8E%E6%99%AF1.jpg", placeInput);
+    addExampleButton(document.querySelector('[data-input="peopleInput"]'), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92mock/%E4%BA%BA%E7%89%A9.webp", peopleInput);
+    addExampleButton(document.querySelector('[data-input="placeInput"]'), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92mock/%E9%A3%8E%E6%99%AF1.webp", placeInput);
     const button = document.querySelector("#generate");
     const status = document.querySelector("#status");
     const preview = document.querySelector(".preview img");
@@ -168,12 +171,12 @@
     const locations = document.querySelector("#locations");
     const preview = document.querySelector(".preview img");
     if (!personInput || !locations || !preview) return;
-    addExampleButton(personInput.closest("label"), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E4%BA%BA%E7%89%A9-%E4%B8%BB%E5%BD%A2%E8%B1%A1.jpg", personInput);
+    addExampleButton(personInput.closest("label"), "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E4%BA%BA%E7%89%A9-%E4%B8%BB%E5%BD%A2%E8%B1%A1.webp", personInput);
     const placeExamples = [
-      ["黄果树大瀑布", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%BB%84%E6%9E%9C%E6%A0%91%E5%A4%A7%E7%80%91%E5%B8%83.jpg"],
-      ["黔灵山公园", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%BB%94%E7%81%B5%E5%B1%B1%E5%85%AC%E5%9B%AD.jpg"],
-      ["青云市集", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%9D%92%E4%BA%91%E5%B8%82%E9%9B%86.jpg"],
-      ["西江千户苗寨", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E8%A5%BF%E6%B1%9F%E5%8D%83%E6%88%B7%E8%8B%97%E5%AF%A8.jpg"],
+      ["黄果树大瀑布", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%BB%84%E6%9E%9C%E6%A0%91%E5%A4%A7%E7%80%91%E5%B8%83.webp"],
+      ["黔灵山公园", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%BB%94%E7%81%B5%E5%B1%B1%E5%85%AC%E5%9B%AD.webp"],
+      ["青云市集", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E9%9D%92%E4%BA%91%E5%B8%82%E9%9B%86.webp"],
+      ["西江千户苗寨", "https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E8%B6%B3%E8%BF%B9%E5%9B%BEmock/%E6%99%AF%E5%8C%BA-%E8%A5%BF%E6%B1%9F%E5%8D%83%E6%88%B7%E8%8B%97%E5%AF%A8.webp"],
     ];
     const addButton = document.querySelector("#add-location");
     const exampleButton = document.createElement("button");

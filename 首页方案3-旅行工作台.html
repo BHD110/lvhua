@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>旅画 - 首页方案三</title>
+  <link rel="stylesheet" href="interactions.css">
+  <script src="interactions.js" defer></script>
+  <style>
+    :root{--paper:#fbf6ec;--ink:#3c201c;--red:#bd3c35;--sun:#e7bc62;--line:#d9baa0;--soft:#f0dfca}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",sans-serif}.page{width:min(1280px,calc(100% - 64px));margin:auto}.top{display:flex;align-items:center;justify-content:space-between;padding:24px 0 16px;border-bottom:1px solid var(--line)}.brand{margin:0}.tag{color:#82594f;font-size:13px;letter-spacing:.12em}.studio{display:grid;grid-template-columns:.76fr 1.25fr .76fr;gap:18px;padding:34px 0 56px}.panel{min-height:570px;padding:22px;border:1px solid var(--line);background:#fffaf1}.panel h2{margin:0;font-size:16px;letter-spacing:.1em}.panel p{margin:9px 0 20px;color:#82594f;font-size:13px;line-height:1.6}.stack{display:grid;gap:12px}.asset{position:relative;overflow:hidden;height:186px;background:var(--soft)}.asset img{width:100%;height:100%;object-fit:cover}.asset span{position:absolute;left:10px;bottom:10px;padding:6px 9px;background:var(--paper);font-size:12px;font-weight:800}.center{position:relative;overflow:hidden;background:#170f0e;padding:0}.center video{display:block;width:100%;height:100%;object-fit:cover}.center::after{content:"人物 ＋ 风景 ＝ 美图";position:absolute;left:20px;top:20px;padding:10px 13px;background:#fbf6ecd9;color:var(--ink);font-weight:900;letter-spacing:.07em}.center .start{position:absolute;left:20px;bottom:20px;padding:15px 22px;background:var(--red);color:var(--paper);font-weight:900;letter-spacing:.1em;text-decoration:none}.output{display:flex;flex-direction:column;justify-content:space-between}.poster{position:relative;height:350px;overflow:hidden;background:var(--soft)}.poster img{width:100%;height:100%;object-fit:cover}.poster b{position:absolute;right:13px;bottom:13px;padding:9px 12px;background:var(--red);color:var(--paper);font-size:13px}.tools{display:grid;gap:10px}.tools a{padding:14px;border-top:1px solid var(--line);color:var(--ink);font-weight:800;text-decoration:none}.tools a span{float:right;color:var(--red)}.foot{padding:0 0 36px;color:#82594f;font-size:13px;text-align:center}@media(max-width:850px){.page{width:min(100% - 36px,620px)}.tag{display:none}.studio{grid-template-columns:1fr}.panel{min-height:0}.center{height:440px}.asset{height:190px}.top{padding-top:18px}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="top"><p class="brand">旅画</p><span class="tag">TRAVEL IMAGE WORKBENCH</span></header>
+    <section class="studio">
+      <aside class="panel">
+        <h2>01 / 放入照片</h2><p>挑选你和想去的地方。旅画会保留人物特征与地点气息。</p>
+        <div class="stack">
+          <figure class="asset"><img src="https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92mock/%E4%BA%BA%E7%89%A9.webp" alt="人物示例"><span>人物</span></figure>
+          <figure class="asset"><img src="https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92%E9%A1%B5%E9%9D%A2/%E9%A3%8E%E6%99%AF%E5%9B%BE2.webp" alt="风景示例"><span>风景</span></figure>
+        </div>
+      </aside>
+      <section class="center"><video src="https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-videos/home-intro.mp4" autoplay muted loop playsinline preload="auto"></video><a class="start" href="hero.html">开始创作</a></section>
+      <aside class="panel output">
+        <div><h2>02 / 收下美图</h2><p>一张更有故事感的旅行人物画面，留住你和风景相遇的瞬间。</p><figure class="poster"><img src="https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92%E9%A1%B5%E9%9D%A2/%E9%A2%84%E8%A7%88%E5%9B%BE.webp" alt="成片示例"><b>美图成片</b></figure></div>
+        <nav class="tools"><a href="hero.html">主角生成 <span>→</span></a><a href="reframe.html">游客照焕新 <span>→</span></a><a href="footprint.html">足迹卡片 <span>→</span></a></nav>
+      </aside>
+    </section>
+    <footer class="foot">人物与风景，在这里成为同一张旅行记忆。</footer>
+  </main>
+</body>
+</html>

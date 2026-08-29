@@ -44,12 +44,11 @@ body .brand-logo { display: block; margin: 0 0 8px; padding: 10px 0 6px; line-he
 dialog[open] .locations { animation-delay: .04s; }
 dialog[open] .dialog-foot { animation-delay: .08s; }
 
-@media (prefers-reduced-motion: reduce) {
-  .motion-enter, .motion-enter.is-visible, .upload-complete, .lightbox.open img, dialog[open] .dialog-head, dialog[open] .locations, dialog[open] .dialog-foot { animation: none; opacity: 1; filter: none; }
-  .tilt-surface, .magnetic { transition: none; transform: none !important; }
-  .pulse-dots i { animation: none; opacity: 1; transform: none; }
-  :where(button, a.generate, label.pick, label.action, label.upload, .upload, .add, .primary, .close):active { translate: none; }
-}
+/* 减弱动态适配：默认不生效；仅当 JS 检测到 ?motion-off 且系统开启"减弱动态效果"时挂 html.motion-off 类 */
+html.motion-off .motion-enter, html.motion-off .motion-enter.is-visible, html.motion-off .upload-complete, html.motion-off .lightbox.open img, html.motion-off dialog[open] .dialog-head, html.motion-off dialog[open] .locations, html.motion-off dialog[open] .dialog-foot { animation: none; opacity: 1; filter: none; }
+html.motion-off .tilt-surface, html.motion-off .magnetic { transition: none; transform: none !important; }
+html.motion-off .pulse-dots i { animation: none; opacity: 1; transform: none; }
+html.motion-off :where(button, a.generate, label.pick, label.action, label.upload, .upload, .add, .primary, .close):active { translate: none; }
 
 @media (max-width: 700px) {
   .brand-logo img { width: 66px; }

@@ -29,6 +29,10 @@ body .brand-logo { display: block; margin: 0 0 8px; padding: 10px 0 6px; line-he
 .location .plus { display: grid; place-items: center; line-height: 1; }
 .location .plus.has-file { font-size: 0; }
 .location .plus.has-file::after { content: "✓"; font-size: 24px; }
+.location-preview { grid-column: 1 / -1; display: block; width: 100%; height: 112px; object-fit: cover; border: 3px solid #fbf6ec; box-shadow: 5px 6px 0 #edc8b8; }
+.person-preview-stack { display: grid; grid-template-columns: repeat(3, 62px); gap: 0; min-height: 0; margin-top: 12px; }
+.person-preview-stack img { width: 68px; height: 72px; object-fit: cover; border: 3px solid #fbf6ec; box-shadow: 4px 5px 0 #edc8b8; }
+.person-preview-stack img + img { margin-left: -24px; }
 .location-name { width: 100%; outline-color: #bd3c35; }
 #add-location + .example-upload { margin-left: 29px; }
 .generation-status { min-height: 22px; margin: 14px 0 0; color: #82594f; font-size: 14px; font-weight: 700; text-align: center; }

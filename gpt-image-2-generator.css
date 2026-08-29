@@ -1,0 +1,90 @@
+gpt-image-2-generator {
+  display: block;
+  width: 100%;
+}
+
+.gpt-image-2-generator {
+  color: #3c201c;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+.gpt-image-2-generator__field {
+  display: block;
+  margin-top: 20px;
+}
+
+.gpt-image-2-generator__field-title {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.gpt-image-2-generator__upload,
+.gpt-image-2-generator__prompt,
+.gpt-image-2-generator__ratio {
+  width: 100%;
+  border: 1px solid #d9baa0;
+  border-radius: 0;
+  background: #fffaf1;
+  color: #3c201c;
+  font: inherit;
+}
+
+.gpt-image-2-generator__upload {
+  padding: 12px;
+}
+
+.gpt-image-2-generator__prompt {
+  min-height: 114px;
+  padding: 12px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.gpt-image-2-generator__ratio {
+  min-height: 44px;
+  padding: 0 12px;
+}
+
+.gpt-image-2-generator__hint,
+.gpt-image-2-generator__status {
+  min-height: 20px;
+  margin: 8px 0 0;
+  color: #82594f;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gpt-image-2-generator__button {
+  display: block;
+  width: 100%;
+  margin-top: 28px;
+  padding: 18px;
+  border: 0;
+  border-radius: 0;
+  background: #bd3c35;
+  box-shadow: 9px 10px 0 #e7bc62;
+  color: #fbf6ec;
+  cursor: pointer;
+  font: 800 17px "Microsoft YaHei", "PingFang SC", sans-serif;
+  letter-spacing: 2px;
+}
+
+.gpt-image-2-generator__button:disabled {
+  cursor: wait;
+  opacity: .72;
+}
+
+.gpt-image-2-generator__results {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.gpt-image-2-generator__result-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #edc8b8;
+}

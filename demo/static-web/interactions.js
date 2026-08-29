@@ -20,7 +20,7 @@
     },
     footprint: {
       person: assetUrl("素材/足迹图mock/人物-主形象.webp"),
-      places: [["黄果树大瀑布", "景区-黄果树大瀑布.webp"], ["黔灵山公园", "景区-黔灵山公园.webp"], ["青云市集", "景区-青云市集.webp"], ["西江千户苗寨", "景区-西江千户苗寨.webp"]],
+      places: ["黄果树大瀑布", "黔灵山公园", "青云市集", "西江千户苗寨"].map((name) => [name, assetUrl(`素材/足迹图mock/景区-${name}.webp`)]),
       result: assetUrl("素材/足迹图mock/result-海报-男生版6.webp"),
     },
   });
@@ -154,23 +154,22 @@
     return window.amicroImageGenerator;
   }
 
-  function addDownloadLink(preview, imageUrl) {
-    const figure = preview.closest("figure");
-    if (!figure) return;
-    let link = figure.querySelector(".generated-download");
-    if (!link) {
-      link = document.createElement("a");
-      link.className = "generated-download";
-      link.textContent = "下载图片";
-      link.target = "_blank";
-      link.rel = "noopener";
-      figure.append(link);
-    }
+  function renderGeneratedResult(container, imageUrl, label) {
+    if (!container) return;
+    const image = document.createElement("img");
+    image.src = imageUrl;
+    image.alt = label;
+    const link = document.createElement("a");
+    link.className = "generated-download";
+    link.textContent = "下载图片";
     link.href = imageUrl;
+    link.target = "_blank";
+    link.rel = "noopener";
     link.download = "旅画生成图";
+    container.replaceChildren(image, link);
   }
 
-  function attachGenerator(button, status, preview, getImages, getPrompt, aspectRatio, readyLabel, getExampleResult) {
+  function attachGenerator(button, status, resultContainer, getImages, getPrompt, aspectRatio, readyLabel, getExampleResult) {
     let generator;
     button.onclick = async () => {
       const images = getImages();
@@ -184,13 +183,11 @@
       const exampleResult = getExampleResult?.();
       if (exampleResult) {
         window.setTimeout(() => {
-          preview.src = exampleResult;
-          preview.alt = readyLabel;
-          addDownloadLink(preview, exampleResult);
+          renderGeneratedResult(resultContainer, exampleResult, readyLabel);
           button.disabled = false;
           button.textContent = "再次生成";
           status.textContent = "示例画面已生成";
-          preview.scrollIntoView({ behavior: "smooth", block: "center" });
+          resultContainer.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 60000);
         return;
       }
@@ -204,13 +201,11 @@
               status.textContent = "图片链接正在准备中。";
               return;
             }
-            preview.src = imageUrl;
-            preview.alt = readyLabel;
-            addDownloadLink(preview, imageUrl);
+            renderGeneratedResult(resultContainer, imageUrl, readyLabel);
             button.disabled = false;
             button.textContent = "再次生成";
             status.textContent = "画面已生成";
-            preview.scrollIntoView({ behavior: "smooth", block: "center" });
+            resultContainer.scrollIntoView({ behavior: "smooth", block: "center" });
           });
           generator.addEventListener("generationerror", (event) => {
             button.disabled = false;
@@ -237,15 +232,19 @@
     addExampleButton(pick?.parentElement || pick, EXAMPLES.reframe.input, input, () => { usesExample = true; });
     const button = document.querySelector("#generate");
     const status = document.querySelector("#result");
-    const preview = document.querySelector("#preview");
+    const inputPreview = document.createElement("div");
+    inputPreview.className = "input-preview-strip";
+    input.closest(".upload")?.append(inputPreview);
+    const resultContainer = document.createElement("div");
+    resultContainer.className = "generated-result";
+    button?.insertAdjacentElement("afterend", resultContainer);
     input.addEventListener("change", (event) => {
       if (event.isTrusted) usesExample = false;
       const file = input.files[0];
       if (!file) return;
-      preview.src = URL.createObjectURL(file);
-      preview.alt = "已上传的游客照预览";
+      renderAlbum(inputPreview, [file], "游客照预览");
     });
-    if (button && status && preview) attachGenerator(button, status, preview, () => Array.from(input.files), () => PROMPTS.reframe, "9:16", "生成的旅画", () => usesExample ? EXAMPLES.reframe.result : "");
+    if (button && status) attachGenerator(button, status, resultContainer, () => Array.from(input.files), () => PROMPTS.reframe, "9:16", "生成的旅画", () => usesExample ? EXAMPLES.reframe.result : "");
   }
 
   function enhanceHeroPage() {
@@ -282,15 +281,16 @@
     placeInput.addEventListener("change", (event) => { if (event.isTrusted) usesExample = false; renderAlbum(placeAlbum, placeInput.files, "风景照片"); });
     const button = document.querySelector("#generate");
     const status = document.querySelector("#status");
-    const preview = document.querySelector(".preview img");
-    if (button && status && preview) attachGenerator(button, status, preview, () => [...peopleInput.files, ...placeInput.files], () => PROMPTS.hero.replace("【人物图数量】", String(peopleInput.files.length)), "16:9", "生成的主角画面", () => usesExample ? EXAMPLES.hero.result : "");
+    const resultContainer = document.createElement("div");
+    resultContainer.className = "generated-result";
+    button?.insertAdjacentElement("afterend", resultContainer);
+    if (button && status) attachGenerator(button, status, resultContainer, () => [...peopleInput.files, ...placeInput.files], () => PROMPTS.hero.replace("【人物图数量】", String(peopleInput.files.length)), "16:9", "生成的主角画面", () => usesExample ? EXAMPLES.hero.result : "");
   }
 
   function enhanceFootprintPage() {
     const personInput = document.querySelector("#person-file");
     const locations = document.querySelector("#locations");
-    const preview = document.querySelector(".preview img");
-    if (!personInput || !locations || !preview) return;
+    if (!personInput || !locations) return;
     let usesExample = false;
     const personPreview = document.createElement("div");
     personPreview.className = "person-preview-stack";
@@ -347,7 +347,9 @@
     const status = document.createElement("p");
     status.className = "generation-status";
     status.setAttribute("aria-live", "polite");
-    side.append(button, status);
+    const resultContainer = document.createElement("div");
+    resultContainer.className = "generated-result";
+    side.append(button, status, resultContainer);
     const getLocationRows = () => Array.from(locations.querySelectorAll(".location"));
     const getLocationNames = () => getLocationRows().map((row, index) => row.querySelector(".location-name")?.value.trim() || `地点${index + 1}`);
     const getLocationFiles = () => getLocationRows().flatMap((row) => Array.from(row.querySelector('input[type="file"]')?.files || []));
@@ -359,7 +361,7 @@
         .replaceAll("【城市拼音】", cityName.toUpperCase())
         .replace("每张卡片配对应地点名称，信息清晰可读。", `地点名称依次为：${names.join("、")}。每张卡片配对应地点名称，信息清晰可读。`);
     };
-    attachGenerator(button, status, preview, () => [ ...personInput.files, ...getLocationFiles() ], getFootprintPrompt, "3:4", "生成的足迹海报", () => usesExample ? EXAMPLES.footprint.result : "");
+    attachGenerator(button, status, resultContainer, () => [ ...personInput.files, ...getLocationFiles() ], getFootprintPrompt, "3:4", "生成的足迹海报", () => usesExample ? EXAMPLES.footprint.result : "");
   }
 
   enhanceReframePage();

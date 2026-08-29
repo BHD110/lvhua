@@ -2,12 +2,14 @@
 
 > 将旅行照片转化为可分享的叙事画面。
 
+![贵州记忆旅行视觉](docs/architecture/assets/guizhou-travel-collection.jpg)
+
 旅画是一个面向文旅场景的多模态生成应用原型。它以 **Pi Agent** 作为完整的 Agent Harness：由 Harness 统一承接用户输入、上下文组织、任务执行、生成状态与结果交付，并将三种旅行内容生产能力封装为可直接体验的 Agent 工作流。
 
 当前仓库提供可直接体验的产品 Demo，用于验证旅行素材采集、Agent 编排与生成结果交付。项目将持续向完整的文旅内容智能体平台演进。
 
 **在线体验：** [https://lcgf.xyz/gks](https://lcgf.xyz/gks)
-
+这个图
 **GitHub Topic：** `Guikesong`
 
 ## 核心能力
@@ -17,6 +19,8 @@
 | 主角画面生成 | 人物照片 + 风景照片 | 将人物与目的地视觉元素组织成横版旅行主视觉 |
 | 游客照焕新 | 一张旅行照片 | 将普通旅行照片转化为竖版艺术旅行海报 |
 | 旅行足迹生成 | 人物照片 + 多个地点及照片 | 生成包含地点信息与导览视觉的旅行足迹海报 |
+
+![旅画文旅多模态内容智能体平台架构图](docs/architecture/assets/lvhua-platform-architecture.png)
 
 ## Pi Agent Harness 架构
 

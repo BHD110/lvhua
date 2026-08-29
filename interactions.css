@@ -27,10 +27,14 @@ body .brand-logo { display: block; margin: 0 0 8px; padding: 10px 0 6px; line-he
 .example-upload { display: block; width: fit-content; margin-top: 10px; padding: 0; border: 0; background: transparent; color: #82594f; font: 700 14px "Microsoft YaHei", "PingFang SC", sans-serif; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
 .location .example-upload { grid-column: 2; justify-self: end; margin: 0; font-size: 12px; }
 .location .plus { display: grid; place-items: center; line-height: 1; }
+.location .plus.has-file { font-size: 0; }
+.location .plus.has-file::after { content: "✓"; font-size: 24px; }
 .location-name { width: 100%; outline-color: #bd3c35; }
 #add-location + .example-upload { margin-left: 29px; }
 .generation-status { min-height: 22px; margin: 14px 0 0; color: #82594f; font-size: 14px; font-weight: 700; text-align: center; }
 .footprint-generate { margin-top: 22px; }
+.generated-download { display: inline-flex; margin-top: 14px; padding: 10px 15px; background: #bd3c35; color: #fbf6ec; font: 700 14px "Microsoft YaHei", sans-serif; letter-spacing: 1px; text-decoration: none; }
+.generated-download:hover, .generated-download:focus-visible { background: #3c201c; }
 
 .pulse-dots { display: inline-flex; gap: 5px; align-items: center; margin-left: 9px; vertical-align: middle; }
 .pulse-dots i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: amicro-pulse-dot 1.4s ease-in-out infinite; }

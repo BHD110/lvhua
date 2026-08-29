@@ -4,6 +4,11 @@
   const reducedMotion = respectSystemReducedMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reducedMotion) document.documentElement.classList.add("motion-off");
   const interactiveSelector = "button, a.generate, label.pick, label.action, label.upload";
+  const PROMPTS = Object.freeze({
+    reframe: "将第1张参考照片转化为一张高品质竖版旅行艺术海报，精致混搭媒介旅行拼贴风格。整张画面以古旧象牙色手工纸为底衬，纸张带细微植物纤维、岁月斑点和自然泛黄旧化纹理。画面上半部保留大量雅致留白，叠加炭灰色建筑蓝图线稿与克制的褪色朱砂红色竖向工程制图线条，像古旧图纸上印出的建筑测绘稿。画面下半部通过一个边缘自然撕裂、露出粗纤维毛边的有机纸窗，框住第1张参考图中的原始场景：完整保留照片的构图、光影和照片质感，转为电影感实景效果。整体带细腻不完美的活版印刷颗粒感，色调以柔和炭灰、老木棕、象牙白、暖红点缀和砖红为主。右下角点缀一枚朱砂红色圆形印章拓印痕迹。竖构图 9:16，画廊级海报质感，细节清晰锐利，无 logo、无水印、无可读文字。",
+    hero: "根据上传的人物肖像自动生成一张收藏版史诗叙事打卡纪念海报：巨大的人物剪影作为外轮廓，剪影内部自动生长出完整世界观、标志性场景、象征符号、关键建筑、风物、道具与氛围（贵州旅行打卡主题）。整体不是普通拼贴，而是高级剪影轮廓填充式叙事合成，带有双重曝光式联想，电影海报与梦幻水彩插画融合风格；柔和空气透视，轻雾化过渡，纸张颗粒，边缘飞白与刷痕，大面积留白，版式克制高级，安静、宏大、神圣、怀旧、诗意、旅途传说感。风格、色彩、场景、材质全部根据贵州旅行主题自动适配，剪影内的风景元素由上传的参考图决定。所有元素必须强绑定贵州地域气质，一眼识别，画面整洁有序，呈现高级叙事感与贵州旅行纪念感。人物穿日常旅行穿搭，整体自然、青春、有纪念感，生成人物样貌与第1张人物参考图高度相似。上传的前【人物图数量】张为人物参考图，人物保持一致性，五官、发型、肤色、服装与参考图贴合，主要生成自然侧颜。其余图片为贵州地点参考图，地点景观按上传顺序从上到下、由远及近自然排布并融合在人物剪影轮廓内部。每个地点元素在剪影内部各自占据一块区域，人物剪影与内部风景是绝对主体。整体仍然保持大面积留白和克制的版式。横构图 16:9，无 logo、无水印、无可读文字。",
+    footprint: "一张竖版高级城市文旅海报，主题为【城市名】城市图鉴，旅行摄影与城市导览视觉风格，3:4 构图。第1张图片为人物实拍照，画面中心人物直接使用该人物，保持人物五官、发型、眼镜、服装、肤色和个人特征。人物自然融入城市街道或旅行地点中，呈现生活化旅行抓拍感，光影自然，材质细节清晰。第2张至最后一张图片为景区实拍原图，每张图片对应一个用户填写的地点名称。画面中为每个地点设置一张景区展示卡片，卡片照片直接使用对应参考图，完整呈现该地点的标志性景观。地点卡片按用户填写的地点顺序排列，每张卡片配对应地点名称，信息清晰可读。背景为【城市名】城市街景，自然 daylight、普通旅行摄影质感，天空淡蓝，光线明亮通透，画面干净现代。画面叠加精致的手机导航 APP 界面元素：人物脚下的定位箭头与路线指引虚线、半透明白色天气卡片、行程卡片、地标距离标注、小型线性图标，排版精致，像旅行攻略导航界面。顶部大标题写“【城市名】”，英文副标题写“【城市拼音】”。地点卡片名称使用用户填写的地点名，文字清晰可读、准确。整体色调固定为白、蓝、暖橙点缀，细节丰富，超高清。realistic city photography, authentic travel photo, travel app UI overlay, navigation interface, premium travel poster, natural daylight, no AI look, no digital painting, photojournalistic style",
+  });
   const entranceObserver = reducedMotion ? null : new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
@@ -104,7 +109,23 @@
     return window.amicroImageGenerator;
   }
 
-  function attachGenerator(button, status, preview, getImages, prompt, aspectRatio, readyLabel) {
+  function addDownloadLink(preview, imageUrl) {
+    const figure = preview.closest("figure");
+    if (!figure) return;
+    let link = figure.querySelector(".generated-download");
+    if (!link) {
+      link = document.createElement("a");
+      link.className = "generated-download";
+      link.textContent = "下载图片";
+      link.target = "_blank";
+      link.rel = "noopener";
+      figure.append(link);
+    }
+    link.href = imageUrl;
+    link.download = "旅画生成图";
+  }
+
+  function attachGenerator(button, status, preview, getImages, getPrompt, aspectRatio, readyLabel) {
     let generator;
     button.onclick = async () => {
       const images = getImages();
@@ -118,10 +139,16 @@
       try {
         await loadImageGenerator();
         if (!generator) {
-          generator = window.GptImage2.create({ prompt, aspectRatio });
+          generator = window.GptImage2.create({ aspectRatio });
           generator.addEventListener("generated", (event) => {
-            preview.src = event.detail.images[0];
+            const imageUrl = event.detail.images[0];
+            if (!imageUrl) {
+              status.textContent = "图片链接正在准备中。";
+              return;
+            }
+            preview.src = imageUrl;
             preview.alt = readyLabel;
+            addDownloadLink(preview, imageUrl);
             button.disabled = false;
             button.textContent = "再次生成";
             status.textContent = "画面已生成";
@@ -134,6 +161,7 @@
           });
         }
         generator.setReferenceImages(images);
+        generator.prompt = getPrompt();
         await generator.generate();
       } catch (error) {
         button.disabled = false;
@@ -151,7 +179,7 @@
     const button = document.querySelector("#generate");
     const status = document.querySelector("#result");
     const preview = document.querySelector("#preview");
-    if (button && status && preview) attachGenerator(button, status, preview, () => Array.from(input.files), "将参考旅行照片整理成一张具有电影感的旅拍画面，保留原有地点、主体与构图特征，光线自然，画面细节清晰。", "4:3", "生成的旅画");
+    if (button && status && preview) attachGenerator(button, status, preview, () => Array.from(input.files), () => PROMPTS.reframe, "9:16", "生成的旅画");
   }
 
   function enhanceHeroPage() {
@@ -163,7 +191,7 @@
     const button = document.querySelector("#generate");
     const status = document.querySelector("#status");
     const preview = document.querySelector(".preview img");
-    if (button && status && preview) attachGenerator(button, status, preview, () => [...peopleInput.files, ...placeInput.files], "以人物照片和风景照片为参考，生成一张人物融入旅行地点的电影感旅拍画面。保留人物五官、服装与姿态特征，地点清晰自然，光线柔和，画面细节丰富。", "16:9", "生成的主角画面");
+    if (button && status && preview) attachGenerator(button, status, preview, () => [...peopleInput.files, ...placeInput.files], () => PROMPTS.hero.replace("【人物图数量】", String(peopleInput.files.length)), "16:9", "生成的主角画面");
   }
 
   function enhanceFootprintPage() {
@@ -216,7 +244,18 @@
     status.className = "generation-status";
     status.setAttribute("aria-live", "polite");
     side.append(button, status);
-    attachGenerator(button, status, preview, () => [ ...personInput.files, ...Array.from(locations.querySelectorAll('input[type="file"]')).flatMap((input) => Array.from(input.files)) ], "以人物照片和旅行地点照片为参考，生成一张竖版旅行足迹海报。保留人物形象与地点标志性景观，排版具有旅行记录感，画面清晰自然。", "3:4", "生成的足迹海报");
+    const getLocationRows = () => Array.from(locations.querySelectorAll(".location"));
+    const getLocationNames = () => getLocationRows().map((row, index) => row.querySelector(".location-name")?.value.trim() || `地点${index + 1}`);
+    const getLocationFiles = () => getLocationRows().flatMap((row) => Array.from(row.querySelector('input[type="file"]')?.files || []));
+    const getFootprintPrompt = () => {
+      const names = getLocationNames();
+      const cityName = "贵州";
+      return PROMPTS.footprint
+        .replaceAll("【城市名】", cityName)
+        .replaceAll("【城市拼音】", cityName.toUpperCase())
+        .replace("每张卡片配对应地点名称，信息清晰可读。", `地点名称依次为：${names.join("、")}。每张卡片配对应地点名称，信息清晰可读。`);
+    };
+    attachGenerator(button, status, preview, () => [ ...personInput.files, ...getLocationFiles() ], getFootprintPrompt, "3:4", "生成的足迹海报");
   }
 
   enhanceReframePage();

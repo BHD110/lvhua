@@ -20,6 +20,16 @@
 .tilt-surface { transform-style: preserve-3d; will-change: transform; transition: transform .38s cubic-bezier(.16,1,.3,1), box-shadow .38s ease; }
 .tilt-surface:hover { box-shadow: 25px 30px 0 var(--peach, #edc8b8); }
 .magnetic { will-change: transform; transition: transform .3s cubic-bezier(.16,1,.3,1), background .2s ease, color .2s ease; }
+body .brand-logo { display: block; margin: 0 0 8px; padding: 10px 0 6px; line-height: 0; }
+.brand-logo a { display: block; width: fit-content; }
+.brand-logo img { display: block; width: 82px; height: auto; mix-blend-mode: multiply; }
+.person-upload { display: flex !important; align-items: center; justify-content: center; min-height: 58px; margin-top: 8px; }
+.example-upload { display: block; width: fit-content; margin-top: 10px; padding: 0; border: 0; background: transparent; color: #82594f; font: 700 14px "Microsoft YaHei", "PingFang SC", sans-serif; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.location .example-upload { grid-column: 2; justify-self: end; margin: 0; font-size: 12px; }
+.location .plus { display: grid; place-items: center; line-height: 1; }
+.location-name { width: 100%; outline-color: #bd3c35; }
+.generation-status { min-height: 22px; margin: 14px 0 0; color: #82594f; font-size: 14px; font-weight: 700; text-align: center; }
+.footprint-generate { margin-top: 22px; }
 
 .pulse-dots { display: inline-flex; gap: 5px; align-items: center; margin-left: 9px; vertical-align: middle; }
 .pulse-dots i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: amicro-pulse-dot 1.4s ease-in-out infinite; }
@@ -39,3 +49,12 @@ dialog[open] .dialog-foot { animation-delay: .08s; }
   .pulse-dots i { animation: none; opacity: 1; transform: none; }
   :where(button, a.generate, label.pick, label.action, label.upload, .upload, .add, .primary, .close):active { translate: none; }
 }
+
+@media (max-width: 700px) {
+  .brand-logo img { width: 66px; }
+  body .brand-logo { margin-bottom: 4px; padding: 8px 0 4px; }
+}
+
+.top:has(.brand-logo) { padding: 16px 0; }
+.top .brand-logo { margin: 0; padding: 0; }
+header:has(.brand-logo) { padding-bottom: 16px; }

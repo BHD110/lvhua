@@ -45,6 +45,181 @@
     element.addEventListener("mouseleave", () => { element.style.transform = "perspective(900px) rotateX(0) rotateY(0) translateZ(0)"; });
   }
 
+  function replaceBrandText() {
+    document.querySelectorAll(".brand").forEach((brand) => {
+      if (brand.dataset.brandLogo) return;
+      brand.dataset.brandLogo = "true";
+      brand.classList.add("brand-logo");
+      const homeLink = document.createElement("a");
+      homeLink.href = "index.html";
+      homeLink.setAttribute("aria-label", "返回首页");
+      const logo = document.createElement("img");
+      logo.src = "素材/logo.png";
+      logo.alt = "旅画";
+      homeLink.append(logo);
+      brand.replaceChildren(homeLink);
+    });
+  }
+
+  function addExampleButton(anchor, imagePath, input) {
+    if (!anchor || anchor.parentElement?.querySelector(`.example-upload[data-example="${imagePath}"]`)) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "example-upload";
+    button.dataset.example = imagePath;
+    button.textContent = "使用示例图片";
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        const response = await fetch(imagePath);
+        if (!response.ok) throw new Error("示例图片暂时无法读取。");
+        const blob = await response.blob();
+        const transfer = new DataTransfer();
+        transfer.items.add(new File([blob], imagePath.split("/").pop(), { type: blob.type || "image/jpeg" }));
+        input.files = transfer.files;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      } catch (error) {
+        const status = document.querySelector("#status, #result");
+        if (status) status.textContent = error instanceof Error ? error.message : "示例图片正在准备中。";
+      } finally {
+        button.disabled = false;
+      }
+    });
+    anchor.insertAdjacentElement("afterend", button);
+  }
+
+  function loadImageGenerator() {
+    if (window.GptImage2) return Promise.resolve();
+    if (window.amicroImageGenerator) return window.amicroImageGenerator;
+    window.amicroImageGenerator = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "gpt-image-2-generator.js";
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("生图组件暂时无法加载。"));
+      document.head.append(script);
+    });
+    return window.amicroImageGenerator;
+  }
+
+  function attachGenerator(button, status, preview, getImages, prompt, aspectRatio, readyLabel) {
+    let generator;
+    button.onclick = async () => {
+      const images = getImages();
+      if (!images.length) {
+        status.textContent = "请先上传图片或使用示例图片";
+        return;
+      }
+      button.disabled = true;
+      button.textContent = "正在生成";
+      status.innerHTML = window.amicroLoading("正在生成画面，通常约需 1 分钟");
+      try {
+        await loadImageGenerator();
+        if (!generator) {
+          generator = window.GptImage2.create({ prompt, aspectRatio });
+          generator.addEventListener("generated", (event) => {
+            preview.src = event.detail.images[0];
+            preview.alt = readyLabel;
+            button.disabled = false;
+            button.textContent = "再次生成";
+            status.textContent = "画面已生成";
+            preview.scrollIntoView({ behavior: "smooth", block: "center" });
+          });
+          generator.addEventListener("generationerror", (event) => {
+            button.disabled = false;
+            button.textContent = "再次生成";
+            status.textContent = event.detail.message;
+          });
+        }
+        generator.setReferenceImages(images);
+        await generator.generate();
+      } catch (error) {
+        button.disabled = false;
+        button.textContent = "再次生成";
+        status.textContent = error instanceof Error ? error.message : "图片生成正在准备中。";
+      }
+    };
+  }
+
+  function enhanceReframePage() {
+    const input = document.querySelector("#file");
+    if (!input) return;
+    const pick = document.querySelector("label.pick");
+    addExampleButton(pick?.parentElement || pick, "素材/废片mock/废片.jpg", input);
+    const button = document.querySelector("#generate");
+    const status = document.querySelector("#result");
+    const preview = document.querySelector("#preview");
+    if (button && status && preview) attachGenerator(button, status, preview, () => Array.from(input.files), "将参考旅行照片整理成一张具有电影感的旅拍画面，保留原有地点、主体与构图特征，光线自然，画面细节清晰。", "4:3", "生成的旅画");
+  }
+
+  function enhanceHeroPage() {
+    const peopleInput = document.querySelector("#peopleInput");
+    const placeInput = document.querySelector("#placeInput");
+    if (!peopleInput || !placeInput) return;
+    addExampleButton(document.querySelector('[data-input="peopleInput"]'), "素材/主角mock/人物.jpg", peopleInput);
+    addExampleButton(document.querySelector('[data-input="placeInput"]'), "素材/主角mock/风景1.jpg", placeInput);
+    const button = document.querySelector("#generate");
+    const status = document.querySelector("#status");
+    const preview = document.querySelector(".preview img");
+    if (button && status && preview) attachGenerator(button, status, preview, () => [...peopleInput.files, ...placeInput.files], "以人物照片和风景照片为参考，生成一张人物融入旅行地点的电影感旅拍画面。保留人物五官、服装与姿态特征，地点清晰自然，光线柔和，画面细节丰富。", "16:9", "生成的主角画面");
+  }
+
+  function enhanceFootprintPage() {
+    const personInput = document.querySelector("#person-file");
+    const locations = document.querySelector("#locations");
+    const preview = document.querySelector(".preview img");
+    if (!personInput || !locations || !preview) return;
+    addExampleButton(personInput.closest("label"), "素材/足迹图mock/人物-主形象.jpg", personInput);
+    const placeExamples = [
+      ["黄果树大瀑布", "素材/足迹图mock/景区-黄果树大瀑布.jpg"],
+      ["黔灵山公园", "素材/足迹图mock/景区-黔灵山公园.jpg"],
+      ["青云市集", "素材/足迹图mock/景区-青云市集.jpg"],
+      ["西江千户苗寨", "素材/足迹图mock/景区-西江千户苗寨.jpg"],
+    ];
+    const addButton = document.querySelector("#add-location");
+    const exampleButton = document.createElement("button");
+    exampleButton.type = "button";
+    exampleButton.className = "example-upload";
+    exampleButton.textContent = "使用示例足迹";
+    addButton?.insertAdjacentElement("afterend", exampleButton);
+    exampleButton.addEventListener("click", async () => {
+      exampleButton.disabled = true;
+      try {
+        locations.replaceChildren();
+        const rows = placeExamples.map(([name]) => window.addFootprintLocation(name));
+        await Promise.all(rows.map(async (row, index) => {
+          const [, imagePath] = placeExamples[index];
+          const response = await fetch(imagePath);
+          if (!response.ok) throw new Error("示例足迹图片暂时无法读取。");
+          const blob = await response.blob();
+          const transfer = new DataTransfer();
+          transfer.items.add(new File([blob], imagePath.split("/").pop(), { type: blob.type || "image/jpeg" }));
+          const input = row.querySelector('input[type="file"]');
+          input.files = transfer.files;
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        }));
+      } catch (error) {
+        status.textContent = error instanceof Error ? error.message : "示例足迹正在准备中。";
+      } finally {
+        exampleButton.disabled = false;
+      }
+    });
+    const side = document.querySelector(".side");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.id = "generate-footprint";
+    button.className = "action footprint-generate";
+    button.textContent = "生成足迹海报";
+    const status = document.createElement("p");
+    status.className = "generation-status";
+    status.setAttribute("aria-live", "polite");
+    side.append(button, status);
+    attachGenerator(button, status, preview, () => [ ...personInput.files, ...Array.from(locations.querySelectorAll('input[type="file"]')).flatMap((input) => Array.from(input.files)) ], "以人物照片和旅行地点照片为参考，生成一张竖版旅行足迹海报。保留人物形象与地点标志性景观，排版具有旅行记录感，画面清晰自然。", "3:4", "生成的足迹海报");
+  }
+
+  enhanceReframePage();
+  enhanceHeroPage();
+  enhanceFootprintPage();
+
   function prepare(root = document) {
     root.querySelectorAll("main > header, main > .brand, main > section, .location").forEach((element, index) => addEntrance(element, Math.min(index * 65, 260)));
     root.querySelectorAll(interactiveSelector).forEach(makeMagnetic);
@@ -61,5 +236,7 @@
   new MutationObserver((records) => records.forEach((record) => record.addedNodes.forEach((node) => {
     if (node instanceof Element) prepare(node.parentElement || document);
   }))).observe(document.body, { childList: true, subtree: true });
+  document.querySelector("#person-file")?.closest("label")?.classList.add("person-upload");
+  replaceBrandText();
   prepare();
 })();

@@ -1,4 +1,6 @@
 {
-  "stage": "failed",
-  "error": "The operation was aborted due to timeout"
+  "stage": "succeeded",
+  "taskId": "12-2bdbdc57-ace8-4dea-9434-9d7e0be1b4d6",
+  "imageUrl": "https://file8.aitohumanize.com/file/baf9f8871b4448a6a1e5a1ddbacfa10f.png",
+  "outputPath": "D:\\codeSource\\epiboly\\贵客松2\\gpt-image-2-验证结果.png"
 }

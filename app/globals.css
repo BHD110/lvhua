@@ -159,6 +159,14 @@ h1 {
 .plus { color: var(--red); font-size: 48px; text-align: center; }
 .upload-control { display: flex; flex-direction: column; gap: 7px; margin-top: 16px; padding: 13px 15px; border: 1px solid var(--red); color: var(--red); font-weight: 700; cursor: pointer; }
 .upload-control input, .place-row input { display: none; }.upload-control small { color: var(--ink-soft); font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.upload-actions { margin-top: 16px; }
+.upload-actions .upload-control { margin-top: 0; }
+.example-button { display: block; width: fit-content; margin-top: 9px; padding: 0; border: 0; border-bottom: 1px solid currentColor; background: transparent; color: var(--red); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.place-list > .example-button { margin-top: 16px; }
+.generated-result { display: block; width: min(760px, 100%); margin: 24px auto 0; background: var(--paper-deep); box-shadow: 12px 14px 0 #edc8b8; }
+.generated-result-portrait { width: min(420px, 100%); }
+.person-preview { display: block; width: min(180px, 100%); aspect-ratio: 2 / 3; margin: 16px 0 0; object-fit: cover; }
+.primary-button:disabled { cursor: wait; opacity: .72; }
 .primary-button, .secondary-button { border: 0; border-radius: 0; font: inherit; font-weight: 800; letter-spacing: 2px; cursor: pointer; }
 .primary-button { display: block; width: min(460px, 100%); margin: 36px auto 0; padding: 18px; background: var(--red); color: var(--paper); }.tool-copy .primary-button { width: 100%; margin-top: 26px; }
 .secondary-button { padding: 11px 0; background: transparent; color: var(--red); border-bottom: 2px solid var(--red); }.tool-status { min-height: 24px; margin: 14px 0 0; color: var(--ink-soft); text-align: center; }.tool-copy .tool-status { text-align: left; }

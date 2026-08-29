@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>旅画 - 首页方案二</title>
+  <link rel="stylesheet" href="interactions.css">
+  <script src="interactions.js" defer></script>
+  <style>
+    :root{--paper:#fbf6ec;--ink:#3c201c;--red:#bd3c35;--rose:#edc8b8;--line:#d9baa0}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",sans-serif}.wrap{width:min(1240px,calc(100% - 64px));margin:auto}.brand{margin:0;padding:25px 0 15px}.mast{padding:18px 0 72px;border-top:1px solid var(--line)}.intro{display:flex;align-items:end;justify-content:space-between;gap:30px;margin:0 0 42px}.intro h1{max-width:720px;margin:0;font-size:clamp(42px,6vw,86px);line-height:1.04;letter-spacing:.02em}.intro h1 em{font-style:normal;color:var(--red)}.intro p{max-width:270px;margin:0 0 8px;color:#82594f;line-height:1.7}.merge{display:grid;grid-template-columns:1fr 116px 1fr;align-items:center;gap:20px}.source{position:relative;margin:0;min-height:500px;overflow:hidden;background:#e7d1bd}.source img{display:block;width:100%;height:500px;object-fit:cover}.source figcaption{position:absolute;left:20px;bottom:18px;padding:9px 13px;background:var(--paper);font-weight:800}.equation{display:grid;place-items:center;color:var(--red);font-size:72px;font-weight:300}.result{position:relative;min-height:500px;background:#251916;padding:14px}.result video{display:block;width:100%;height:472px;object-fit:cover}.result .label{position:absolute;right:28px;bottom:31px;padding:10px 14px;background:var(--red);color:var(--paper);font-weight:800;letter-spacing:.08em}.bottom{display:flex;align-items:center;justify-content:space-between;gap:28px;padding-top:38px}.bottom strong{font-size:19px}.bottom span{color:var(--red)}.buttons{display:flex;gap:12px}.buttons a{padding:13px 18px;border:1px solid var(--red);color:var(--red);font-weight:800;text-decoration:none}.buttons a:first-child{background:var(--red);color:var(--paper)}@media(max-width:760px){.wrap{width:min(100% - 36px,600px)}.intro{display:block}.intro p{margin-top:20px}.merge{grid-template-columns:1fr;gap:15px}.equation{height:45px;font-size:55px}.source,.result{min-height:0}.source img,.result video{height:auto;aspect-ratio:16/10}.bottom{align-items:flex-start;flex-direction:column}.buttons{width:100%}.buttons a{flex:1;text-align:center}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="brand">旅画</p>
+    <section class="mast">
+      <header class="intro"><h1>一张人物照，<em>遇见</em>一处风景。</h1><p>旅画将人物与地点自然组合，让旅行照片成为值得留存的美图。</p></header>
+      <div class="merge">
+        <figure class="source"><img src="https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92mock/%E4%BA%BA%E7%89%A9.webp" alt="人物照片"><figcaption>人物照片</figcaption></figure>
+        <div class="equation">＋</div>
+        <figure class="source"><img src="https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-images-webp/%E7%B4%A0%E6%9D%90/%E4%B8%BB%E8%A7%92%E9%A1%B5%E9%9D%A2/%E9%A3%8E%E6%99%AF%E5%9B%BE1.webp" alt="风景照片"><figcaption>风景照片</figcaption></figure>
+      </div>
+      <div class="equation">＝</div>
+      <figure class="result"><video src="https://wuyoubucket.oss-cn-chengdu.aliyuncs.com/uploads/static-videos/home-intro.mp4" autoplay muted loop playsinline preload="auto"></video><span class="label">你的旅途美图</span></figure>
+      <footer class="bottom"><strong>把照片放进风景，<span>让回忆有了主角。</span></strong><div class="buttons"><a href="hero.html">生成美图</a><a href="footprint.html">生成足迹</a></div></footer>
+    </section>
+  </main>
+</body>
+</html>

@@ -5,6 +5,7 @@
   const FALLBACK_API_KEY = "sk-3176dfb524134f288960f2517d15d7da";
   const POLL_INTERVAL_MS = 2000;
   const POLL_MAX_ATTEMPTS = 60;
+  const REQUEST_TIMEOUT_MS = 20000;
 
   const ASPECT_RATIO_MAP = Object.freeze({
     auto: "auto", "1:1": "1024x1024", "16:9": "1672x941", "9:16": "941x1672",
@@ -29,13 +30,23 @@
   }
 
   async function requestJson(url, apiKey, options) {
-    const response = await fetch(url, {
-      ...options,
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", ...(options.headers || {}) },
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (response.ok) return payload;
-    throw new Error(payload.error?.message || payload.error || payload.detail || `接口状态码 ${response.status}`);
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", ...(options.headers || {}) },
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (response.ok) return payload;
+      throw new Error(payload.error?.message || payload.error || payload.detail || `接口状态码 ${response.status}`);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") throw new Error("接口连接超过 20 秒，正在切换备用接口。");
+      throw error;
+    } finally {
+      window.clearTimeout(timeout);
+    }
   }
 
   function normalizePrimaryTask(payload) {

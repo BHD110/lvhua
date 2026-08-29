@@ -1,15 +1,15 @@
-# 旅画 · Pi Agent Harness Demo
+# 旅画 · 山水贵州，等你绘成旅画
 
 > 将旅行照片转化为可分享的叙事画面。
 
 ![贵州记忆旅行视觉](docs/architecture/assets/guizhou-travel-collection.jpg)
 
-旅画是一个面向文旅场景的多模态生成应用原型。它以 **Pi Agent** 作为完整的 Agent Harness：由 Harness 统一承接用户输入、上下文组织、任务执行、生成状态与结果交付，并将三种旅行内容生产能力封装为可直接体验的 Agent 工作流。
+旅画是一个面向文旅场景的多模态生成应用原型。它以 **Pi Agent** 作为底层的 Agent Harness：由 Harness 统一承接用户输入、上下文组织、任务执行、生成状态与结果交付，并将三种旅行内容生产能力封装为可直接体验的 Agent 工作流。
 
 当前仓库提供可直接体验的产品 Demo，用于验证旅行素材采集、Agent 编排与生成结果交付。项目将持续向完整的文旅内容智能体平台演进。
 
 **在线体验：** [https://lcgf.xyz/gks](https://lcgf.xyz/gks)
-这个图
+
 **GitHub Topic：** `Guikesong`
 
 ## 核心能力
@@ -107,17 +107,23 @@ Pi Agent Harness
 
 用户上传人物与风景图片。Agent 将人物作为画面主体，结合多个目的地素材组织旅行叙事，输出 16:9 主视觉画面。
 
+![主角画面生成示例](docs/architecture/assets/example-hero-generation.jpg)
+
 适合用于旅行纪念、景区互动屏、活动传播页与社交媒体封面。
 
 ### 2. 游客照焕新
 
 用户提供一张游客照。Agent 将照片理解为视觉参考，并按预设的旅行艺术海报方向生成 9:16 画面。
 
+![游客照焕新示例](docs/architecture/assets/example-reframe-generation.jpg)
+
 适合把普通拍摄素材转化为具备传播感的旅行内容。
 
 ### 3. 旅行足迹生成
 
 用户上传人物照，补充多个地点名称与地点图片。Agent 按输入顺序关联地点信息和参考图，生成 3:4 的城市旅行足迹海报。
+
+![旅行足迹生成示例](docs/architecture/assets/example-footprint-generation.png)
 
 适合用于路线回顾、城市打卡、旅游攻略与行程留存。
 

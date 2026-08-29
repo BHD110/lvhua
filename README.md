@@ -121,9 +121,10 @@ Pi Agent Harness
 
 ## 本地运行
 
-在项目根目录执行：
+进入 Demo 目录后执行：
 
 ```powershell
+cd demo/static-web
 ./start-lan-preview.cmd
 ```
 
@@ -132,16 +133,17 @@ Pi Agent Harness
 也可以使用 Python 启动静态服务：
 
 ```powershell
+cd demo/static-web
 py -3 -m http.server 8080 --bind 127.0.0.1
 ```
 
 ## 页面入口
 
-- `index.html`：产品首页与三类工作流入口
-- `hero.html`：主角画面生成
-- `reframe.html`：游客照焕新
-- `footprint.html`：旅行足迹生成
-- `image-generator-demo.html`：图像生成组件示例
+- `demo/static-web/index.html`：产品首页与三类工作流入口
+- `demo/static-web/hero.html`：主角画面生成
+- `demo/static-web/reframe.html`：游客照焕新
+- `demo/static-web/footprint.html`：旅行足迹生成
+- `demo/static-web/image-generator-demo.html`：图像生成组件示例
 
 ## 迭代方向
 

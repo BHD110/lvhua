@@ -170,3 +170,15 @@ py -3 -m http.server 8080 --bind 127.0.0.1
 ## 项目定位
 
 旅画当前以 Demo 形式呈现核心体验，并以 Pi Agent Harness、Next.js、Rust 和数据智能体系为目标平台架构，逐步构建面向文旅行业的多模态内容生产与运营能力。
+
+<details>
+<summary><strong>商业合作</strong></summary>
+<br>
+<table>
+  <tr>
+    <td align="center"><strong>商业合作</strong><br><img src="docs/architecture/assets/qr-business-cooperation-1.jpg" alt="商业合作二维码 1" width="180"></td>
+    <td align="center"><strong>商业合作</strong><br><img src="docs/architecture/assets/qr-business-cooperation-2.jpg" alt="商业合作二维码 2" width="180"></td>
+    <td align="center"><strong>文旅策划</strong><br><img src="docs/architecture/assets/qr-cultural-tourism-planning.jpg" alt="文旅策划二维码" width="180"></td>
+  </tr>
+</table>
+</details>
